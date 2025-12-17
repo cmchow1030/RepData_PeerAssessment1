@@ -235,37 +235,6 @@ interval_step2 <- tapply(data_noNA$steps,
 
 #converting the resulted matrix into a long data frame
 library(tidyverse)
-```
-
-```
-## Warning: 套件 'tidyverse' 是用 R 版本 4.5.2
-## 來建造的
-```
-
-```
-## Warning: 套件 'forcats' 是用 R 版本 4.5.2
-## 來建造的
-```
-
-```
-## Warning: 套件 'lubridate' 是用 R 版本 4.5.2
-## 來建造的
-```
-
-```
-## ── Attaching core tidyverse packages ─────────
-## ✔ dplyr     1.1.4     ✔ readr     2.1.5
-## ✔ forcats   1.0.1     ✔ stringr   1.5.2
-## ✔ ggplot2   4.0.0     ✔ tibble    3.3.0
-## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
-## ✔ purrr     1.1.0     
-## ── Conflicts ──────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
-## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
-```
-
-``` r
 df_long <- interval_step2 %>% 
         as.data.frame() %>% 
         mutate(type = rownames(.)) %>% 
