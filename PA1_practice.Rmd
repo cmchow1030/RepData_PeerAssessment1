@@ -105,7 +105,7 @@ cat("5-minute interval containing the maximum number of steps on average:",
 Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NA  
 
 ```{r missing values}
-no_NA <- nrow(data[is.na(data$steps), ]) #alternative way: sum(is.na(data$steps))
+no_NA <- nrow(data[is.na(data$steps), ])
 cat("Total Numer of Missing values:", no_NA, "\n")
 ```
 
@@ -113,7 +113,6 @@ Filling in all of the missing values in the dataset with the mean for that 5-min
 to create a new dataset that is equal to the original dataset but with the missing data filled in.
 ```{r a strategy to fill in NA}
 data_noNA <- data
-#replace the $steps value with the mean value for that 5-min interval whenever it is NA  
 for (x in (which(is.na(data$steps)))) 
          {data_noNA$steps[x] <- 
           df_is$steps[df_is$interval == data_noNA$interval[x]]
@@ -174,6 +173,24 @@ data_noNA$level <- factor(x = data_noNA$day,
 interval_step2 <- tapply(data_noNA$steps,
                         list(data_noNA$level, as.factor(data$interval)),
                         function(x){mean(x, na.rm = TRUE)})
+#converting the resulted matrix into a data frame for checking
+df_is2 <- data.frame(
+         interval = as.numeric(colnames(interval_step2)),
+         steps_weekday = as.numeric(interval_step2[1,]),
+         steps_weekend = as.numeric(interval_step2[2,])
+ )
+#plotting a line graph using base R
+plot(x = df_is2$interval, 
+     y = df_is2$steps_weekday, 
+     type = "l",
+     main = "Average Daily Activity Pattern",
+     xlab = "Interval (min)",
+     ylab = "Average Number of Steps",
+     col = "blue")
+# Add weekend line 
+lines(x = df_is2$interval, y = df_is2$steps_weekend, col = "red", lwd = 2) 
+# Add legend 
+legend("topright", legend = c("Weekday", "Weekend"), col = c("blue", "red"), lwd = 2)
 
 #converting the resulted matrix into a long data frame
 library(tidyverse)
@@ -190,6 +207,5 @@ ggplot(df_long, aes(x = interval, y = steps, colour = type)) +
 geom_line(linewidth = 1) + 
 labs(x = "Interval (min)", y = "Average Number of Steps", colour = "Type", title = "Average Daily Activity Pattern",) +
 facet_wrap(~type, ncol = 1, nrow=2) +
-theme_minimal()+
-theme( plot.title = element_text(hjust = 0.5)) # centre the title
+theme_minimal()
 ```
