@@ -1,0 +1,286 @@
+
+=========================  
+title: "Reproducible Research: Peer Assessment 1"  
+output: 
+  html_document:  
+    keep_md: true   
+author: "CM CHOW (Cherry)"    
+date: "2025-12-15"    
+output: html_document  
+assignment website: [project1](https://www.coursera.org/learn/reproducible-research/peer/gYyPt/course-project-1)  
+=========================    
+
+# Course Project 1  
+
+## Introduction
+This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
+
+The data for this assignment can be downloaded from the course web site:
+
+- Dataset: [Activity monitoring data](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip)  
+
+(**The zip file is downloaded and renamed as "activity.zip"**)
+
+
+The variables included in this dataset are:
+
+- steps: Number of steps taking in a 5-minute interval (missing values are coded as NA)
+
+- date: The date on which the measurement was taken in YYYY-MM-DD format
+
+- interval: Identifier for the 5-minute interval in which measurement was taken
+
+The dataset is stored in a comma-separated-value (CSV) file and there are a total of 17,568 observations in this dataset.
+
+## Setting Global Option  
+
+``` r
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading and preprocessing the data  
+
+``` r
+path = getwd()
+unzip("activity.zip", exdir = path)
+data <- read.csv("activity.csv", header = TRUE)
+```
+## What is mean total number of steps taken per day?  
+
+``` r
+#calculating total steps taken on a day
+total_step <- tapply(data$steps, 
+                data$date, 
+                function(x){sum(x, na.rm = TRUE)})
+#plotting a histogram using base R
+ceiling <- ceiling(max(total_step, na.rm = TRUE)/2500)*2500+2500
+hist(total_step, 
+     main = paste("Histogram of Total Steps taken on a Day"), 
+     xlab = "Total Steps", 
+     breaks = seq(0, ceiling, by = 2500),
+     col = "blue")
+```
+
+![plot of chunk mean total number of steps](figure/mean total number of steps-1.png)
+
+``` r
+#calculating the mean and median of the total number of steps taken per day
+mean_total_step <- mean(total_step, na.rm = TRUE)
+median_total_step <- median(total_step, na.rm = TRUE)
+cat("Mean of the total number of steps taken per day:", 
+    round(mean_total_step, 2), "\n")
+```
+
+```
+## Mean of the total number of steps taken per day: 9354.23
+```
+
+``` r
+cat("Median of the total number of steps taken per day:", 
+    round(median_total_step, 2), "\n")
+```
+
+```
+## Median of the total number of steps taken per day: 10395
+```
+##  What is the average daily activity pattern?  
+
+Make a time series plot (i.e. type = "l" of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)  
+
+
+``` r
+#calculate the mean value of steps for each interval
+interval_step <- tapply(data$steps,
+                        as.factor(data$interval),
+                        function(x){mean(x, na.rm = TRUE)})
+#converting the resulted array into a data frame for further processing
+df_is <- data.frame(
+         interval = as.numeric(names(interval_step)),
+         steps = as.numeric(interval_step)
+ )
+#plotting a line graph using base R
+plot(x = df_is$interval, 
+     y = df_is$steps, 
+     type = "l",
+     main = "Average Daily Activity Pattern",
+     xlab = "Interval",
+     ylab = "Average Number of Steps",
+     col = "blue")
+```
+
+![plot of chunk average daily activity pattern](figure/average daily activity pattern-1.png)
+  
+Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?  
+
+``` r
+#finding the 5-min interval where the average step value is max
+interval_maxstep <- df_is$interval[df_is$steps == max(df_is$steps)]
+
+#reporting the finding
+cat("5-minute interval containing the maximum number of steps on average:", 
+    interval_maxstep, "\n")
+```
+
+```
+## 5-minute interval containing the maximum number of steps on average: 835
+```
+## Imputing missing values 
+
+Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NA  
+
+
+``` r
+no_NA <- nrow(data[is.na(data$steps), ]) #alternative way: sum(is.na(data$steps))
+cat("Total Numer of Missing values:", no_NA, "\n")
+```
+
+```
+## Total Numer of Missing values: 2304
+```
+
+Filling in all of the missing values in the dataset with the mean for that 5-minute interval
+to create a new dataset that is equal to the original dataset but with the missing data filled in.
+
+``` r
+data_noNA <- data
+#replace the $steps value with the mean value for that 5-min interval whenever it is NA  
+for (x in (which(is.na(data$steps)))) 
+         {data_noNA$steps[x] <- 
+          df_is$steps[df_is$interval == data_noNA$interval[x]]
+                            }
+```
+
+With the dataset with the missing value filled, make a histogram of the total number of steps taken each day, and calculate and report the mean and median total number of steps taken per day. 
+
+
+``` r
+#calculating total steps taken on a day
+total_step2 <- tapply(data_noNA$steps, 
+                data_noNA$date, 
+                function(x){sum(x, na.rm = TRUE)})
+#plotting a histogram using base R
+ceiling <- ceiling(max(total_step2, na.rm = TRUE)/2500)*2500+2500
+hist(total_step2, 
+     main = paste("Histogram of Total Steps taken on a Day"), 
+     xlab = "Total Steps", 
+     breaks = seq(0, ceiling, by = 2500),
+     col = "blue")
+```
+
+![plot of chunk mean total number of steps with the new dataset](figure/mean total number of steps with the new dataset-1.png)
+
+``` r
+#calculating the mean and median of the total number of steps taken per day
+mean_total_step2 <- mean(total_step2, na.rm = TRUE)
+median_total_step2 <- median(total_step2, na.rm = TRUE)
+cat("Mean of the total number of steps taken per day:", 
+    round(mean_total_step2, 2), "\n")
+```
+
+```
+## Mean of the total number of steps taken per day: 10766.19
+```
+
+``` r
+cat("Median of the total number of steps taken per day:", 
+    round(median_total_step2, 2), "\n")
+```
+
+```
+## Median of the total number of steps taken per day: 10766.19
+```
+Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+``` r
+Diff_mean <- mean_total_step2 - mean_total_step
+Diff_median <- median_total_step2 - median_total_step
+cat("The difference in mean of the total number of steps taken per day:", 
+    round(Diff_mean, 2), "\n")
+```
+
+```
+## The difference in mean of the total number of steps taken per day: 1411.96
+```
+
+``` r
+cat("The difference in median of the total number of steps taken per day:", 
+    round(Diff_median, 2), "\n")
+```
+
+```
+## The difference in median of the total number of steps taken per day: 371.19
+```
+
+Imputing missing data results in increase in both mean (by 1411.959171) and median (by 371.1886792). 
+
+## Are there differences in activity patterns between weekdays and weekends?  
+
+``` r
+data_noNA$date <- as.Date(data_noNA$date)
+data_noNA$day<- lapply(data_noNA$date,
+                      function(x)
+                              {weekdays(x, abbreviate = TRUE)}
+                      )
+wd_we <- data.frame( day = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"), 
+                     level = c(rep("weekday", 5), rep("weekend", 2)) )
+
+data_noNA$level <- factor(x = data_noNA$day, 
+                          levels = wd_we$day, 
+                          labels = wd_we$level)
+
+#calculate the mean value of steps for each interval
+interval_step2 <- tapply(data_noNA$steps,
+                        list(data_noNA$level, as.factor(data$interval)),
+                        function(x){mean(x, na.rm = TRUE)})
+
+#converting the resulted matrix into a long data frame
+library(tidyverse)
+```
+
+```
+## Warning: 套件 'tidyverse' 是用 R 版本 4.5.2
+## 來建造的
+```
+
+```
+## Warning: 套件 'forcats' 是用 R 版本 4.5.2
+## 來建造的
+```
+
+```
+## Warning: 套件 'lubridate' 是用 R 版本 4.5.2
+## 來建造的
+```
+
+```
+## ── Attaching core tidyverse packages ─────────
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.1     ✔ stringr   1.5.2
+## ✔ ggplot2   4.0.0     ✔ tibble    3.3.0
+## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+## ✔ purrr     1.1.0     
+## ── Conflicts ──────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+```
+
+``` r
+df_long <- interval_step2 %>% 
+        as.data.frame() %>% 
+        mutate(type = rownames(.)) %>% 
+        pivot_longer( cols = -type, names_to = "interval", values_to = "steps" ) %>% 
+        mutate(interval = as.numeric(interval))
+
+
+#plotting a line graph using ggplot2
+
+ggplot(df_long, aes(x = interval, y = steps, colour = type)) + 
+geom_line(linewidth = 1) + 
+labs(x = "Interval (min)", y = "Average Number of Steps", colour = "Type", title = "Average Daily Activity Pattern",) +
+facet_wrap(~type, ncol = 1, nrow=2) +
+theme_minimal()+
+theme( plot.title = element_text(hjust = 0.5)) # centre the title
+```
+
+![plot of chunk differences between weekdays and weekends](figure/differences between weekdays and weekends-1.png)
