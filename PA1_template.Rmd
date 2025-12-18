@@ -44,7 +44,7 @@ unzip("activity.zip", exdir = path)
 data <- read.csv("activity.csv", header = TRUE)
 ```
 ## What is mean total number of steps taken per day?  
-```{r mean total number of steps}
+```{r mean_total_number_of_steps}
 #calculating total steps taken on a day
 total_step <- tapply(data$steps, 
                 data$date, 
@@ -70,7 +70,7 @@ cat("Median of the total number of steps taken per day:",
 
 Make a time series plot (i.e. type = "l" of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)  
 
-```{r average daily activity pattern}
+```{r average_daily_activity_pattern}
 #calculate the mean value of steps for each interval
 interval_step <- tapply(data$steps,
                         as.factor(data$interval),
@@ -92,7 +92,7 @@ plot(x = df_is$interval,
 ```
   
 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?  
-```{r interval with the maximum number of steps}
+```{r interval_with_the_maximum_number_of_steps}
 #finding the 5-min interval where the average step value is max
 interval_maxstep <- df_is$interval[df_is$steps == max(df_is$steps)]
 
@@ -104,7 +104,7 @@ cat("5-minute interval containing the maximum number of steps on average:",
 
 Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NA  
 
-```{r missing values}
+```{r missing_values}
 no_NA <- nrow(data[is.na(data$steps), ]) #alternative way: sum(is.na(data$steps))
 cat("Total Numer of Missing values:", no_NA, "\n")
 ```
@@ -122,7 +122,7 @@ for (x in (which(is.na(data$steps))))
 
 With the dataset with the missing value filled, make a histogram of the total number of steps taken each day, and calculate and report the mean and median total number of steps taken per day. 
 
-```{r mean total number of steps with the new dataset}
+```{r mean_total_number_of_steps_with_the_new_dataset}
 #calculating total steps taken on a day
 total_step2 <- tapply(data_noNA$steps, 
                 data_noNA$date, 
@@ -157,7 +157,7 @@ cat("The difference in median of the total number of steps taken per day:",
 Imputing missing data results in increase in both mean (by `r Diff_mean`) and median (by `r Diff_median`). 
 
 ## Are there differences in activity patterns between weekdays and weekends?  
-```{r differences between weekdays and weekends}
+```{r differences_between_weekdays_and_weekends}
 data_noNA$date <- as.Date(data_noNA$date)
 data_noNA$day<- lapply(data_noNA$date,
                       function(x)

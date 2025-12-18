@@ -61,7 +61,7 @@ hist(total_step,
      col = "blue")
 ```
 
-![plot of chunk mean total number of steps](figure/mean total number of steps-1.png)
+![plot of chunk mean_total_number_of_steps](figure/mean_total_number_of_steps-1.png)
 
 ``` r
 #calculating the mean and median of the total number of steps taken per day
@@ -108,7 +108,7 @@ plot(x = df_is$interval,
      col = "blue")
 ```
 
-![plot of chunk average daily activity pattern](figure/average daily activity pattern-1.png)
+![plot of chunk average_daily_activity_pattern](figure/average_daily_activity_pattern-1.png)
   
 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?  
 
@@ -167,7 +167,7 @@ hist(total_step2,
      col = "blue")
 ```
 
-![plot of chunk mean total number of steps with the new dataset](figure/mean total number of steps with the new dataset-1.png)
+![plot of chunk mean_total_number_of_steps_with_the_new_dataset](figure/mean_total_number_of_steps_with_the_new_dataset-1.png)
 
 ``` r
 #calculating the mean and median of the total number of steps taken per day
@@ -235,6 +235,34 @@ interval_step2 <- tapply(data_noNA$steps,
 
 #converting the resulted matrix into a long data frame
 library(tidyverse)
+```
+
+```
+## Warning: 套件 'tidyverse' 是用 R 版本 4.5.2 來建造的
+```
+
+```
+## Warning: 套件 'forcats' 是用 R 版本 4.5.2 來建造的
+```
+
+```
+## Warning: 套件 'lubridate' 是用 R 版本 4.5.2 來建造的
+```
+
+```
+## ── Attaching core tidyverse packages ───────────────────────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.1     ✔ stringr   1.5.2
+## ✔ ggplot2   4.0.0     ✔ tibble    3.3.0
+## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+## ✔ purrr     1.1.0     
+## ── Conflicts ─────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+```
+
+``` r
 df_long <- interval_step2 %>% 
         as.data.frame() %>% 
         mutate(type = rownames(.)) %>% 
@@ -252,4 +280,4 @@ theme_minimal()+
 theme( plot.title = element_text(hjust = 0.5)) # centre the title
 ```
 
-![plot of chunk differences between weekdays and weekends](figure/differences between weekdays and weekends-1.png)
+![plot of chunk differences_between_weekdays_and_weekends](figure/differences_between_weekdays_and_weekends-1.png)
